@@ -13,8 +13,6 @@ class OHHandling(commands.Cog):
         self._open_sessions = {}
         self._handlers_on_duty = {}
         self._notify_channel = {}
-        # i could use inheritance here instead of dictionaries... tempting
-        # EDIT: yeah ima do it lol
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: on_ready()
