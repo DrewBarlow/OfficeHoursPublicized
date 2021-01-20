@@ -1,0 +1,5 @@
+[
+"[22:57] REWRITE: Hello <@188992948262797312>! Welcome to your session with <@188992948262797312>!",
+"[22:57] Drew: Office hours!,
+"[22:58] Drew: !close"
+]
