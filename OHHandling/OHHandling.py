@@ -86,21 +86,6 @@ class OHHandling(commands.Cog):
         queueable = duget(member.guild.roles, name="Queueable")
         await member.add_roles(queueable)
 
-    """
-
-    """
-    async def bug(self, *bug) -> None:
-        if ctx.message.channel is discord.DMChannel: return
-
-        if not bug:
-            return await ctx.send("Please include the bug after `!bug`.")
-
-        #find my id, send me the bug report
-        # also change on guild join to send me an invite to the server
-        # find a means of communication with the bot instead maybe?
-        # talk to them through DMs??
-        # drew = await self.bot.fetch_user(188992948262797312)
-
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: _enqueue()
     :param: discord.ext.commands.Context | ctx
