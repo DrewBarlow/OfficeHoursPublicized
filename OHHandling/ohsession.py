@@ -17,14 +17,11 @@ class OHSession:
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: open()
-    :param: discord.Guild | guild
-    :returns: void
-    :access: public
     :preconditions: This OHSession has been instantiated.
     :postconditions: A role, a category, a text channel, and a voice channel
                      is created in a guild.
     """""""""""""""""""""""""""""""""""""""""""""""""""
-    async def open(self, guild) -> None:
+    async def open(self, guild: discord.Guild) -> None:
         session_name = "Session for %s" % self._student.display_name
 
         # create a discord.Role object based off of the student's name
@@ -64,14 +61,11 @@ class OHSession:
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: close()
-    :param: discord.TextChannel | channel
-    :returns: void
-    :access: public
     :preconditions: This OHSession has been opened.
     :postconditions: The existing discord.Role, discord.Category, discord.TextChannel,
                      and discord.VoiceChannel instances are deleted.
     """""""""""""""""""""""""""""""""""""""""""""""""""
-    async def close(self, channel) -> None:
+    async def close(self, channel: discord.TextChannel) -> None:
         if not self._is_open:
             return await channel.send("There isn't a session open!")
 
@@ -157,8 +151,6 @@ class OHSession:
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: get_members()
-    :returns: {str: discord.Member, str: discord.Member}
-    :access: public
     :preconditions: This OHSession has been instantiated.
     :postconditions: The handler and the student's discord.Member instances are
                      returned.
