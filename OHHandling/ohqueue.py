@@ -10,13 +10,11 @@ class OHQueue:
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: enqueue()
-    :param: discord.Member | student
-    :access: public
     :preconditions: At least one handler is on duty in the guild this is called in.
     :postconditions: A discord.Member instance is added to a guild's queue if
                      the member isn't already in the queue.
     """""""""""""""""""""""""""""""""""""""""""""""""""
-    async def enqueue(self, student) -> None:
+    async def enqueue(self, student: discord.Member) -> None:
         # if the student is already queued in the guild, raise exception
         if student in self._queue: raise exceptions.ExistsInQueue
 
@@ -27,8 +25,6 @@ class OHQueue:
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: dequeue()
-    :returns: discord.Member.
-    :access: public
     :preconditions: At least one discord.Member instance is in the queue for a guild.
     :postconditions: The first discord.Member instance in the queue for a guild
                      is removed from the queue and returned.
@@ -53,17 +49,13 @@ class OHQueue:
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: remove()
-    :param: discord.Member | student
-    :param: int | position
-    :returns: void
-    :access: public
     :preconditions: The discord.Member object that is passed is present in the queue,
                     or the discord.Member object that is present at the given
                     position exists in the queue.
     :postconditions: The passed discord.Member instance or the discord.Member
                      instance at the passed position is removed from the queue.
     """""""""""""""""""""""""""""""""""""""""""""""""""
-    async def remove(self, student=None, position=None) -> None:
+    async def remove(self, student: discord.Member = None, position: int = None) -> None:
         found = False
 
         # using default parameters, we can check if an index was passed rather
@@ -92,8 +84,6 @@ class OHQueue:
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: queue_emb()
-    :returns: discord.Embed()
-    :access: public
     :preconditions: The queue is requested by either a Handler or Queueable.
     :postconditions: The guild's current queue is returned.
     """""""""""""""""""""""""""""""""""""""""""""""""""
@@ -118,24 +108,19 @@ class OHQueue:
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: accepting()
-    :param: bool | accept
-    :returns: void
-    :access: public
     :preconditions: Either a discord.Guild instance can go from having no
                     handlers on duty to at least one, or from at least one handler
                     on duty to having none.
     :postconditions: The students are wiped from the queue after 15 minutes if
                      office hours have not reopened.
     """""""""""""""""""""""""""""""""""""""""""""""""""
-    def accepting(self, accepting) -> None:
+    def accepting(self, accepting: bool) -> None:
         self._accepting = accepting
 
         return
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: end_oh()
-    :returns: void
-    :access: public
     :preconditions: All handlers in a discord.Guild instance have gone off duty.
     :postconditions: The students are wiped from the queue after 15 minutes if
                      office hours have not reopened.
@@ -156,8 +141,6 @@ class OHQueue:
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: is_empty()
-    :returns: bool
-    :access: public
     :preconditions: OHQueue has been instantiated.
     :postconditions: A boolean that indicates if a guild's queue is empty is returned.
     """""""""""""""""""""""""""""""""""""""""""""""""""
@@ -166,14 +149,11 @@ class OHQueue:
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: check()
-    :param: int | student_id
-    :returns: bool
-    :access: public
     :preconditions: A member attempts to remove themself from a guild's queue.
     :postconditions: A boolean that indicates if a discord.Member object that
                      matches the passed id exists a guild's queue is returned.
     """""""""""""""""""""""""""""""""""""""""""""""""""
-    def check(self, student_id) -> bool:
+    def check(self, student_id: int) -> bool:
         for member in self._queue:
             if member.id == student_id: return True
 
