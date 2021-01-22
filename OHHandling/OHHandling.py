@@ -16,8 +16,6 @@ class OHHandling(commands.Cog):
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: on_ready()
-    :returns: void
-    :access: public
     :preconditions: Bot is running and this cog is loaded.
     :postconditions: All member dictionaries are initialized with discord.Guild.id keys.
     """""""""""""""""""""""""""""""""""""""""""""""""""
@@ -33,14 +31,11 @@ class OHHandling(commands.Cog):
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: on_guild_join()
-    :param: discord.Guild | guild
-    :returns: void
-    :access: public
     :preconditions: The bot client has joined a new server and is online.
     :postconditions: This discord.Guild.id is added as a key to all member dictionaries.
     """""""""""""""""""""""""""""""""""""""""""""""""""
     @commands.Cog.listener()
-    async def on_guild_join(self, guild) -> None:
+    async def on_guild_join(self, guild: discord.Guild) -> None:
         self._queues[guild.id] = OHQueue(self._bot)
         self._open_sessions[guild.id] = []
         self._handlers_on_duty[guild.id] = {}
@@ -53,16 +48,13 @@ class OHHandling(commands.Cog):
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: on_guild_remove()
-    :param: discord.Guild | guild
-    :returns: void
-    :access: public
     :preconditions: The bot client has been kicked from, banned from, or has
                     otherwise been removed from a server and is online.
     :postconditions: The existing discord.Guild.id and all of it's data is removed
                      from all member dictionaries.
     """""""""""""""""""""""""""""""""""""""""""""""""""
     @commands.Cog.listener()
-    async def on_guild_remove(self, guild) -> None:
+    async def on_guild_remove(self, guild: discord.Guild) -> None:
         del self._queues[guild.id]
         del self._open_sessions[guild.id]
         del self._handlers_on_duty[guild.id]
@@ -72,24 +64,17 @@ class OHHandling(commands.Cog):
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: on_member_join()
-    :param: discord.Member | member
-    :returns: void
-    :access: public
     :preconditions: A new discord.Member instance is added to a discord.Guild.
     :postconditions: A discord.Role instance of name "Queueable" is added to
                      the new discord.Member instance.
     """""""""""""""""""""""""""""""""""""""""""""""""""
     @commands.Cog.listener()
-    async def on_member_join(self, member) -> None:
+    async def on_member_join(self, member: discord.Member) -> None:
         queueable = duget(member.guild.roles, name="Queueable")
         await member.add_roles(queueable)
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: _enqueue()
-    :param: discord.ext.commands.Context | ctx
-    :param: str* | reason
-    :returns: void
-    :access: private
     :preconditions: At least one handler is on duty in this guild, the author has
                     the Queueable role, and the author isn't already queued.
     :postconditions: The author's discord.Member instance is appended to this
@@ -98,7 +83,7 @@ class OHHandling(commands.Cog):
     @commands.has_role("Queueable")
     @commands.command(name="enqueue", aliases=["queue", "request", "q"])
     @exceptions.enqueue()
-    async def _enqueue(self, ctx, *reason) -> None:
+    async def _enqueue(self, ctx: discord.ext.commands.Context, *reason: str) -> None:
         # attempt to enqueue the author into this guild's queue
         await self._queues[ctx.guild.id].enqueue(ctx.author)
 
@@ -120,10 +105,6 @@ class OHHandling(commands.Cog):
 
     """
     :name: _kick()
-    :param: discord.ext.commands.Context | ctx
-    :param: int | position
-    :returns: void
-    :access: private
     :preconditions: The author has the Handler role and at least one discord.Member
                     object is queued in this guild.
     :postconditions: A discord.Member object is removed from this guild's queue.
@@ -131,7 +112,7 @@ class OHHandling(commands.Cog):
     @commands.has_role("On Duty")
     @commands.command(name="kick", aliases=["boot", "remove"])
     @exceptions.kick()
-    async def _kick(self, ctx, position: int) -> None:
+    async def _kick(self, ctx: discord.ext.commands.Context, position: int) -> None:
         # attempt to remove person in this guild's queue at the given position
         await self._queues[ctx.guild.id].remove(position=(position - 1))
         await ctx.send("Success.")
@@ -140,9 +121,6 @@ class OHHandling(commands.Cog):
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: _current_queue()
-    :param: discord.ext.commands.Context | ctx
-    :returns: void
-    :access: private
     :preconditions: The author has either the Handler role or Queueable role
                     in this guild.
     :postconditions: The guild's current queue is sent.
@@ -150,7 +128,7 @@ class OHHandling(commands.Cog):
     @commands.has_any_role("Handler", "Queueable")
     @commands.command(name="currqueue", aliases=["currq", "cq"])
     @exceptions.office_hours_exceptions()
-    async def _current_queue(self, ctx) -> None:
+    async def _current_queue(self, ctx: discord.ext.commands.Context) -> None:
         # make sure this isn't in a DM channel
         if ctx.message.channel is discord.DMChannel: raise exceptions.CommandInDM
         await ctx.send(embed=self._queues[ctx.guild.id].queue_emb())
@@ -159,9 +137,6 @@ class OHHandling(commands.Cog):
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: _dequeue()
-    :param: discord.ext.commands.Context | ctx
-    :returns: void
-    :access: private
     :preconditions: At least one handler is on duty in this guild, the author
                     has the Queueable role, and the author is queued.
     :postconditions: The author's discord.Member instance is removed from this
@@ -170,7 +145,7 @@ class OHHandling(commands.Cog):
     @commands.has_role("Queueable")
     @commands.command(name="dequeue", aliases=["leave", "leavequeue"])
     @exceptions.dequeue()
-    async def _dequeue(self, ctx) -> None:
+    async def _dequeue(self, ctx: discord.ext.commands.Context) -> None:
         # remove the author from this guild's queue and notify all of this guild's
         # handlers on duty that the author has been removed
         await self._queues[ctx.guild.id].remove(student=ctx.author)
@@ -180,9 +155,6 @@ class OHHandling(commands.Cog):
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: _accept()
-    :param: discord.ext.commands.Context | ctx
-    :returns: void
-    :access: private
     :preconditions: The author is not currently handling a session, has the Handler
                     role, and has the On Duty role.
     :postconditions: A new instance of OHSession is created, opened, and is
@@ -191,7 +163,7 @@ class OHHandling(commands.Cog):
     @commands.has_role("Handler")
     @commands.command(name="accept", aliases=["take", "yoink"])
     @exceptions.accept()
-    async def _accept(self, ctx) -> None:
+    async def _accept(self, ctx: discord.ext.commands.Context) -> None:
         # create a new OHSession, open it for use, then store it in the value
         # for this guild's open_sessions
         new_session = OHSession(ctx.author, await self._queues[ctx.guild.id].dequeue())
@@ -206,9 +178,6 @@ class OHHandling(commands.Cog):
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: _close()
-    :param: discord.ext.commands.Context | ctx
-    :returns: void
-    :access: private
     :preconditions: The author is currently handling a session, has the Handler
                     role, and has the On Duty role.
     :postconditions: The OHSession instance that the handler has open in this guild is
@@ -217,7 +186,7 @@ class OHHandling(commands.Cog):
     @commands.has_role("Handler")
     @commands.command(name="close", aliases=["finish", "finishup", "finished", "done"])
     @exceptions.close()
-    async def _close(self, ctx) -> None:
+    async def _close(self, ctx: discord.ext.commands.Context) -> None:
         # iterate through all open sessions and find the one that the author is handling
         # once found, close the session and remove it from the open sessions
         for session in self._open_sessions[ctx.guild.id]:
@@ -230,9 +199,6 @@ class OHHandling(commands.Cog):
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: _on_duty()
-    :param: discord.ext.commands.Context | ctx
-    :returns: void
-    :access: private
     :preconditions: The author has the Handler role and is not On Duty in this guild.
     :postconditions: The author is given the On Duty role in this guild and their
                      discord.Member instance is added to this guild's handlers_on_duty.
@@ -240,7 +206,7 @@ class OHHandling(commands.Cog):
     @commands.has_role("Handler")
     @commands.command(name="onduty", aliases=["on"])
     @exceptions.on_duty()
-    async def _on_duty(self, ctx) -> None:
+    async def _on_duty(self, ctx: discord.ext.commands.Context) -> None:
         duty_role = duget(ctx.guild.roles, name="On Duty")
 
         # add On Duty to the author and add their object to this guild's
@@ -262,9 +228,6 @@ class OHHandling(commands.Cog):
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: _off_duty()
-    :param: discord.ext.commands.Context | ctx
-    :returns: void
-    :access: private
     :preconditions: The author has the Handler role and is On Duty in this guild.
     :postconditions: The On Duty role is removed from the author and their
                      discord.Member instance is removed from this guild's
@@ -273,7 +236,7 @@ class OHHandling(commands.Cog):
     @commands.has_role("Handler")
     @commands.command(name="offduty", aliases=["off"])
     @exceptions.off_duty()
-    async def _off_duty(self, ctx) -> None:
+    async def _off_duty(self, ctx: discord.ext.commands.Context) -> None:
         # retrieve the On Duty role for checking and adding
         duty_role = duget(ctx.guild.roles, name="On Duty")
 
@@ -297,16 +260,12 @@ class OHHandling(commands.Cog):
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: _handler_notify()
-    :param: int | guild_id
-    :param: str | msg
-    :returns: void
-    :access: private
     :preconditions: This guild has at least one discord.Member instance in it's
                     handlers_on_duty.
     :postconditions: All discord.Member instances in this guild's handlers_on_duty
                      are sent the passed str.
     """""""""""""""""""""""""""""""""""""""""""""""""""
-    async def _handler_notify(self, guild_id, msg) -> None:
+    async def _handler_notify(self, guild_id: int, msg: str) -> None:
         for key in self._handlers_on_duty[guild_id].keys():
             await self._handlers_on_duty[guild_id][key].send(msg)
 
@@ -328,8 +287,6 @@ class OHHandling(commands.Cog):
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: _pres_change()
-    :returns: void
-    :access: private
     :preconditions: _on_duty() or _off_duty() has successfully executed and the
                     len of a guild's handlers_on_duty is greater than 0.
     :postconditions: The client's custom status is updated to reflect the total
@@ -344,14 +301,11 @@ class OHHandling(commands.Cog):
 
     """""""""""""""""""""""""""""""""""""""""""""""""""
     :name: _create_reqs()
-    :param: discord.Guild | guild
-    :returns: void
-    :access: private
     :preconditions: The bot client has joined a guild.
     :postconditions: The guild is populated with the necessary roles and channels
                      that are needed for office hours.
     """""""""""""""""""""""""""""""""""""""""""""""""""
-    async def _create_reqs(self, guild) -> None:
+    async def _create_reqs(self, guild: discord.Guild) -> None:
         # mass create all required roles for handling OHSessions
         handler = await guild.create_role(name="Handler")
         on_duty = await guild.create_role(name="On Duty")
