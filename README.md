@@ -1,16 +1,16 @@
-## Office Hours Bot
-### Intended to be used in academic discord servers
+# Office Hours Bot
+## Intended to be used in academic discord servers
 
-#### NOTE: THIS IS REPOSITORY USES AN OUTDATED API AND IS NO LONGER MAINTAINED!
+### NOTE: THIS IS REPOSITORY USES AN OUTDATED API AND IS NO LONGER MAINTAINED!
 
-##### To run:
+#### To run:
   1. Clone this repository
   2. Get your own bot token from [discord's developer portal](https://discord.com/login?redirect_to=%2Fdevelopers%2Fapplications)
   3. Invite your bot to the server of your choosing
   4. Give teaching assistants the "Handler" role and students the "Queueable" role
   5. Run `main.py`
   
-##### Commands:
+#### Commands:
   * For handlers:
       * !currqueue/!currq/!cq
           * Shows the queue of students in this guild
